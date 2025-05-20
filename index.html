@@ -184,9 +184,10 @@
       margin: 20px auto;
       padding: 0 20px;
     }
+    /* Адаптивная сетка карточек: можно добавлять/удалять элементы */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 20px;
       margin-top: 20px;
     }
@@ -204,6 +205,8 @@
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
       animation: fadeInUp 0.5s ease;
+      text-align: center;
+      padding: 10px;
     }
     .card:hover {
       transform: translateY(-5px) scale(1.02);
@@ -356,6 +359,8 @@
       padding: 20px;
       position: relative;
       animation: slideInDown 0.3s ease forwards;
+      overflow: auto; /* чтобы при узких экранах появлялся скролл */
+      max-height: 90vh; /* не выходить за пределы экрана */
     }
     @keyframes slideInDown {
       0% {
@@ -408,17 +413,25 @@
       transform: scale(1.1);
     }
 
-    /* Новая верстка шагов: три колонки (большие) */
+    /* Три колонки (шаг, поле, пример). При узком экране уходим в 1 колонку */
     .step-row {
       display: grid;
-      grid-template-columns: 150px 1fr 1fr; /* первая колонка под шаг, вторая – ввод, третья – пример */
+      grid-template-columns: minmax(120px, 150px) minmax(200px, 1fr) minmax(200px, 1fr);
       gap: 20px;
       margin-bottom: 20px;
       align-items: start;
     }
+    @media (max-width: 900px) {
+      .step-row {
+        grid-template-columns: 1fr; /* Одна колонка на узких экранах */
+      }
+      .step-circle {
+        margin: 0 auto 10px auto;
+      }
+    }
     .step-circle {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -429,6 +442,7 @@
       border: 1px solid #bbb;
       background-color: #f9f9f9;
       text-align: center;
+      margin: 0 auto; /* по центру в своей ячейке */
     }
     .step-input {
       width: 100%;
@@ -458,17 +472,23 @@
       padding: 8px;
       font-size: 0.9rem;
     }
-    .download-btn {
+    /* Кнопка-иконка в виде круга для скачивания */
+    .download-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #007BFF;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      color: #007BFF;
-      font-size: 1.4rem;
-      margin-top: 5px;
-      transition: transform 0.3s, color 0.3s;
-      align-self: flex-start; /* прижать кнопку к левому краю в третьей колонке */
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 1.3rem;
     }
-    .download-btn:hover {
-      transform: scale(1.2);
-      color: #0056b3;
+    .download-circle:hover {
+      background-color: #0056b3;
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -536,6 +556,7 @@
       </div>
     </header>
     <main>
+      <!-- Адаптивная сетка карточек (можно добавлять/убирать) -->
       <div class="cards-grid">
         <div class="card" data-modal="modal1">SWOT</div>
         <div class="card" data-modal="modal2">PEST</div>
@@ -563,14 +584,14 @@
           <div class="breadcrumbs">Главная / SWOT / Определение выхода</div>
           <div class="modal-profile-icon">👤</div>
         </div>
-        <!-- 4 шага, каждый в 3 колонки -->
+        <!-- 4 шага, каждый в 3 колонки: шаг, поле, пример (кнопка-круг) -->
         <div class="step-row">
           <div class="step-circle">I шаг</div>
           <textarea class="step-input" placeholder="Описание шага I..."></textarea>
           <div class="example-column">
             <label>Пример</label>
             <textarea class="example-textarea" placeholder="Пример для шага I..."></textarea>
-            <span class="download-btn" title="Скачать пример">⬇</span>
+            <div class="download-circle" title="Скачать пример">⬇</div>
           </div>
         </div>
         <div class="step-row">
@@ -579,7 +600,7 @@
           <div class="example-column">
             <label>Пример</label>
             <textarea class="example-textarea" placeholder="Пример для шага II..."></textarea>
-            <span class="download-btn" title="Скачать пример">⬇</span>
+            <div class="download-circle" title="Скачать пример">⬇</div>
           </div>
         </div>
         <div class="step-row">
@@ -588,7 +609,7 @@
           <div class="example-column">
             <label>Пример</label>
             <textarea class="example-textarea" placeholder="Пример для шага III..."></textarea>
-            <span class="download-btn" title="Скачать пример">⬇</span>
+            <div class="download-circle" title="Скачать пример">⬇</div>
           </div>
         </div>
         <div class="step-row">
@@ -597,7 +618,7 @@
           <div class="example-column">
             <label>Пример</label>
             <textarea class="example-textarea" placeholder="Пример для шага IV..."></textarea>
-            <span class="download-btn" title="Скачать пример">⬇</span>
+            <div class="download-circle" title="Скачать пример">⬇</div>
           </div>
         </div>
       </div>
@@ -865,9 +886,9 @@
     }
 
     /***********************
-     * Модальные окна (скачивание именно «Примера»)
+     * Модальные окна (скачивание только из «Примера»)
      ***********************/
-    // Открытие модалок
+    // Открытие/закрытие модалок
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
       card.addEventListener('click', () => {
@@ -876,7 +897,6 @@
         if (modal) modal.style.display = 'flex';
       });
     });
-    // Закрытие по крестику
     const closeButtons = document.querySelectorAll('.close-modal');
     closeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -884,7 +904,6 @@
         modal.style.display = 'none';
       });
     });
-    // Закрытие по клику на подложку
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
       modal.addEventListener('click', (e) => {
@@ -892,23 +911,20 @@
       });
     });
 
-    // Скачивание только из "Примера"
-    const downloadButtons = document.querySelectorAll('.download-btn');
-    downloadButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Ищем ближайшую textarea с классом .example-textarea
-        const exampleColumn = btn.closest('.example-column');
+    // Скачивание из «Примера» (кнопка-круг .download-circle)
+    const downloadCircles = document.querySelectorAll('.download-circle');
+    downloadCircles.forEach(circle => {
+      circle.addEventListener('click', () => {
+        const exampleColumn = circle.closest('.example-column');
         if (!exampleColumn) return;
 
         const exampleTextarea = exampleColumn.querySelector('.example-textarea');
         if (!exampleTextarea) return;
 
         const content = exampleTextarea.value;
-        // Генерируем txt-файл
         const blob = new Blob([content], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
 
-        // Создаём временную ссылку
         const a = document.createElement('a');
         a.href = url;
         a.download = 'example.txt';
