@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>uppptip</title>
+<title>uppttip</title>
 <!-- CDN для ZIP -->
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -149,7 +149,7 @@ footer{padding:18px 0;text-align:center;color:var(--txt-faded);font-size:.9rem}
   <!-- ======= ОСНОВНОЙ САЙТ ======= -->
   <section id="siteWrapper" style="display:none;min-height:100vh;display:flex;flex-direction:column">
     <header>
-      <div class="logo">uppptip</div>
+      <div class="logo">uppttip</div>
       <nav>
         <ul>
           <li class="active" data-page="home">Главная</li>
@@ -214,7 +214,7 @@ footer{padding:18px 0;text-align:center;color:var(--txt-faded);font-size:.9rem}
       </section>
     </main>
 
-    <footer>© 2025 uppptip</footer>
+    <footer>© 2025 uppttip</footer>
     <div id="modalsContainer"></div>
     <div id="toast" class="toast"></div>
   </section>
@@ -653,7 +653,7 @@ footer{padding:18px 0;text-align:center;color:var(--txt-faded);font-size:.9rem}
       zip.file(`${card.title}.txt`, txt);
     });
     const blob = await zip.generateAsync({type:'blob'});
-    download('uppptip_export.zip', blob);
+    download('uppttip_export.zip', blob);
   }
   document.getElementById('exportBtn').onclick = exportZIP;
   document.getElementById('exportBtn2').onclick = exportZIP;
