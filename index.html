@@ -17,7 +17,7 @@
     }
 
     /************************************************************
-     * СЕКЦИЯ АУТЕНТИФИКАЦИИ (Авторизация / Регистрация)
+     * СЕКЦИЯ АВТОРИЗАЦИИ (Авторизация / Регистрация)
      ************************************************************/
     #authSection {
       display: flex;
@@ -256,12 +256,17 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    .cabinet-profile img {
+    /* Блок для фото (img) и блок для эмодзи (если нет фото) */
+    .cabinet-avatar-img {
       width: 100px;
       height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      margin-bottom: 10px;
+      display: none; /* по умолчанию скрыто, пока не загрузим */
+    }
+    .cabinet-avatar-emoji {
+      font-size: 60px;
+      display: none; /* покажем, если нет изображения */
     }
     .cabinet-username {
       font-weight: bold;
@@ -324,7 +329,7 @@
     }
 
     /************************************************************
-     * МОДАЛЬНЫЕ ОКНА (Пример шаговой карточки)
+     * МОДАЛЬНЫЕ ОКНА (Пример карточки)
      ************************************************************/
     .modal-overlay {
       display: none;
@@ -382,6 +387,7 @@
       margin-bottom: 15px;
       border-bottom: 1px solid #ddd;
       padding-bottom: 10px;
+      font-weight: bold;
     }
     .modal-header .breadcrumbs {
       font-size: 0.9rem;
@@ -402,34 +408,39 @@
       background-color: #ccc;
       transform: scale(1.1);
     }
+
+    /* Структура шагов (I, II, III, IV) + большая textarea */
     .step-row {
       display: flex;
       align-items: center;
-      gap: 10px;
       margin-bottom: 15px;
     }
     .step-circle {
-      min-width: 40px;
-      min-height: 40px;
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
+      min-width: 60px;
+      min-height: 60px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
       color: #555;
+      margin-right: 10px;
+      font-size: 0.9rem;
+      border: 1px solid #bbb;
+      background-color: #f9f9f9;
     }
     .step-input {
       flex: 1;
       border: 1px solid #ccc;
       border-radius: 4px;
-      padding: 5px 10px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
     }
     .download-btn {
       cursor: pointer;
       color: #007BFF;
       font-size: 1.2rem;
+      margin-left: 8px;
       transition: transform 0.3s, color 0.3s;
     }
     .download-btn:hover {
@@ -437,24 +448,27 @@
       color: #0056b3;
     }
     .example-label {
-      margin-left: auto;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #999;
       font-style: italic;
+      margin-left: 8px;
       cursor: pointer;
       transition: color 0.3s;
     }
     .example-label:hover {
       color: #666;
     }
+    .large-textarea-row {
+      margin-bottom: 15px;
+    }
     .large-textarea {
       width: 100%;
-      height: 100px;
+      height: 120px;
       border: 1px solid #ccc;
       border-radius: 4px;
       resize: none;
-      margin-bottom: 15px;
-      padding: 5px 10px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
     }
   </style>
 </head>
@@ -541,7 +555,7 @@
       © 2025 uppptip
     </footer>
 
-    <!-- Модальные окна (пример карточки с шагами) -->
+    <!-- Пример модального окна (1). Остальные (2..12) аналогичные -->
     <div class="modal-overlay" id="modal1">
       <div class="modal-content">
         <span class="close-modal">&times;</span>
@@ -549,34 +563,41 @@
           <div class="breadcrumbs">Главная / SWOT / Определение выхода</div>
           <div class="modal-profile-icon">👤</div>
         </div>
+        <!-- I шаг -->
         <div class="step-row">
-          <div class="step-circle">I</div>
-          <input type="text" class="step-input" placeholder="Описание шага I...">
-          <span class="download-btn">⬇</span>
+          <div class="step-circle">I шаг</div>
+          <input type="text" class="step-input" placeholder="Описание шага I..." />
+          <span class="download-btn" title="Скачать содержимое">⬇</span>
           <span class="example-label">Пример</span>
         </div>
+        <!-- II шаг -->
         <div class="step-row">
-          <div class="step-circle">II</div>
-          <input type="text" class="step-input" placeholder="Описание шага II...">
-          <span class="download-btn">⬇</span>
+          <div class="step-circle">II шаг</div>
+          <input type="text" class="step-input" placeholder="Описание шага II..." />
+          <span class="download-btn" title="Скачать содержимое">⬇</span>
           <span class="example-label">Пример</span>
         </div>
-        <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+        <!-- Большое поле для заметок -->
+        <div class="large-textarea-row">
+          <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+        </div>
+        <!-- III шаг -->
         <div class="step-row">
-          <div class="step-circle">III</div>
-          <input type="text" class="step-input" placeholder="Описание шага III...">
-          <span class="download-btn">⬇</span>
+          <div class="step-circle">III шаг</div>
+          <input type="text" class="step-input" placeholder="Описание шага III..." />
+          <span class="download-btn" title="Скачать содержимое">⬇</span>
           <span class="example-label">Пример</span>
         </div>
+        <!-- IV шаг -->
         <div class="step-row">
-          <div class="step-circle">IV</div>
-          <input type="text" class="step-input" placeholder="Описание шага IV...">
-          <span class="download-btn">⬇</span>
+          <div class="step-circle">IV шаг</div>
+          <input type="text" class="step-input" placeholder="Описание шага IV..." />
+          <span class="download-btn" title="Скачать содержимое">⬇</span>
           <span class="example-label">Пример</span>
         </div>
       </div>
     </div>
-    <!-- Остальные модальные окна (modal2…modal12) можно скопировать аналогично -->
+    <!-- Остальные модалки (2..12) — можно скопировать тот же блок и поменять заголовок/текст -->
   </section>
 
   <!-- Личный кабинет (открывается при клике по эмодзи профиля) -->
@@ -584,7 +605,10 @@
     <div class="cabinet-container">
       <h2 class="cabinet-title">Личный кабинет</h2>
       <div class="cabinet-profile">
-        <img id="cabinetAvatar" src="" alt="Аватар пользователя">
+        <!-- Изображение-аватар -->
+        <img id="cabinetAvatar" class="cabinet-avatar-img" alt="Аватар пользователя">
+        <!-- Эмодзи, если нет загруженного портрета -->
+        <div id="cabinetEmoji" class="cabinet-avatar-emoji">😃</div>
         <div class="cabinet-username" id="cabinetUsername"></div>
       </div>
       <div class="cabinet-actions">
@@ -600,6 +624,11 @@
         <div class="cabinet-form-group">
           <label for="newPassword">Новый пароль</label>
           <input type="password" id="newPassword" placeholder="Новый пароль...">
+        </div>
+        <!-- Поле для загрузки нового портрета -->
+        <div class="cabinet-form-group">
+          <label for="avatarFile">Новый портрет (изображение)</label>
+          <input type="file" id="avatarFile" accept="image/*">
         </div>
         <button class="cabinet-save-btn" id="saveSettingsBtn">Сохранить</button>
       </div>
@@ -638,12 +667,14 @@
      ***********************/
     const cabinetUsername = document.getElementById('cabinetUsername');
     const cabinetAvatar = document.getElementById('cabinetAvatar');
+    const cabinetEmoji = document.getElementById('cabinetEmoji');
     const openSettingsBtn = document.getElementById('openSettingsBtn');
     const cabinetSettingsForm = document.getElementById('cabinetSettingsForm');
     const backToMainBtn = document.getElementById('backToMainBtn');
     const logoutBtnCabinet = document.getElementById('logoutBtnCabinet');
     const newUsername = document.getElementById('newUsername');
     const newPassword = document.getElementById('newPassword');
+    const avatarFile = document.getElementById('avatarFile');
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
     // Профиль-иконка (для личного кабинета)
@@ -726,7 +757,7 @@
       const newUser = {
         username,
         password,
-        avatar: 'https://via.placeholder.com/100'
+        avatar: '' // пока без портрета
       };
       users.push(newUser);
       currentUser = newUser;
@@ -740,52 +771,111 @@
     /***********************
      * Личный кабинет
      ***********************/
-    profileIcon.addEventListener('click', () => {
+    // Показываем/скрываем аватар и эмодзи
+    function updateCabinetAvatar() {
+      if (currentUser && currentUser.avatar) {
+        // Если есть загруженное изображение
+        cabinetAvatar.style.display = 'block';
+        cabinetEmoji.style.display = 'none';
+        cabinetAvatar.src = currentUser.avatar;
+      } else {
+        // Если нет загруженного портрета
+        cabinetAvatar.style.display = 'none';
+        cabinetEmoji.style.display = 'block';
+      }
+    }
+
+    function openCabinet() {
       if (currentUser) {
         cabinetUsername.textContent = currentUser.username;
-        cabinetAvatar.src = currentUser.avatar || 'https://via.placeholder.com/100';
+        updateCabinetAvatar();
         mainSection.style.display = 'none';
         cabinetSection.style.display = 'block';
       } else {
         alert('Сначала войдите в систему!');
       }
-    });
+    }
+
+    profileIcon.addEventListener('click', openCabinet);
+
     backToMainBtn.addEventListener('click', () => {
       cabinetSection.style.display = 'none';
       mainSection.style.display = 'block';
     });
+
     logoutBtnCabinet.addEventListener('click', () => {
       currentUser = null;
       saveToLocalStorage();
       updateView();
     });
+
     openSettingsBtn.addEventListener('click', () => {
       cabinetSettingsForm.style.display = cabinetSettingsForm.style.display === 'block' ? 'none' : 'block';
     });
+
+    // Обработка сохранения настроек (смена логина, пароля, загрузка портрета)
     saveSettingsBtn.addEventListener('click', () => {
       if (!currentUser) return;
+
       const newU = newUsername.value.trim();
       const newP = newPassword.value.trim();
-      if (newU) {
+
+      // Проверяем смену логина
+      if (newU && newU !== currentUser.username) {
+        // Проверка, что нет другого пользователя с таким логином
         if (users.find(u => u.username === newU && u !== currentUser)) {
           alert('Пользователь с таким логином уже существует!');
           return;
         }
         currentUser.username = newU;
       }
-      if (newP) currentUser.password = newP;
-      const idx = users.findIndex(u => u.username === cabinetUsername.textContent);
-      if (idx !== -1) users[idx] = currentUser;
-      saveToLocalStorage();
-      cabinetUsername.textContent = currentUser.username;
-      newUsername.value = '';
-      newPassword.value = '';
-      cabinetSettingsForm.style.display = 'none';
-      alert('Данные обновлены!');
+
+      // Смена пароля
+      if (newP) {
+        currentUser.password = newP;
+      }
+
+      // Если выбрано новое изображение
+      if (avatarFile.files && avatarFile.files[0]) {
+        const file = avatarFile.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // e.target.result — это Base64-код картинки
+          currentUser.avatar = e.target.result;
+          finishSettingsUpdate();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Если файл не выбран, просто завершаем
+        finishSettingsUpdate();
+      }
     });
 
+    // Завершение сохранения настроек (обновление массива users, UI)
+    function finishSettingsUpdate() {
+      const idx = users.findIndex(u => u.username === cabinetUsername.textContent);
+      // Из-за смены логина поиск по старому может быть неверен
+      // Поэтому лучше найти по ссылке на объект
+      const realIdx = users.findIndex(u => u === currentUser);
+      if (realIdx !== -1) {
+        users[realIdx] = currentUser;
+      }
+      saveToLocalStorage();
+
+      // Обновим отображение
+      cabinetUsername.textContent = currentUser.username;
+      updateCabinetAvatar();
+
+      // Сбросим поля
+      newUsername.value = '';
+      newPassword.value = '';
+      avatarFile.value = '';
+      cabinetSettingsForm.style.display = 'none';
+      alert('Данные обновлены!');
+    }
+
     /***********************
-     * Модальные окна карточек
+     * Модальные окна карточек (скачивание и "Пример")
      ***********************/
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
@@ -795,6 +885,7 @@
         if (modal) modal.style.display = 'flex';
       });
     });
+
     const closeButtons = document.querySelectorAll('.close-modal');
     closeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -802,10 +893,71 @@
         modal.style.display = 'none';
       });
     });
+
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.style.display = 'none';
+      });
+    });
+
+    // Кнопки "скачать" внутри карточек
+    const downloadButtons = document.querySelectorAll('.download-btn');
+    downloadButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        // Найдём поле ввода/textarea в той же строке
+        const parentRow = btn.closest('.step-row');
+        if (parentRow) {
+          const input = parentRow.querySelector('.step-input');
+          let content = '';
+          if (input) {
+            content = input.value;
+          } else {
+            // Может быть textarea, но в данном макете textarea отдельной строкой
+            // Если нужно скачивать из textarea - аналогично
+          }
+          // Если это textarea (если родитель row не нашёл input):
+          if (!content) {
+            const maybeTextarea = parentRow.querySelector('.large-textarea');
+            if (maybeTextarea) content = maybeTextarea.value;
+          }
+
+          // Генерируем txt-файл
+          const blob = new Blob([content], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+
+          // Создаём временную ссылку
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'step_data.txt';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+      });
+    });
+
+    // Кнопки "Пример" (заполняют поле тестовыми данными)
+    const exampleLabels = document.querySelectorAll('.example-label');
+    exampleLabels.forEach(label => {
+      label.addEventListener('click', () => {
+        const parentRow = label.closest('.step-row');
+        if (parentRow) {
+          const input = parentRow.querySelector('.step-input');
+          if (input) {
+            input.value = 'Пример: здесь описание шага...';
+          }
+        } else {
+          // Если хотим заполнять textarea
+          const maybeTextarea = label.closest('.large-textarea-row');
+          if (maybeTextarea) {
+            const ta = maybeTextarea.querySelector('.large-textarea');
+            if (ta) {
+              ta.value = 'Примерный текст для большого поля...';
+            }
+          }
+        }
       });
     });
   </script>
