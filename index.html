@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>uppptip</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      background-color: #f0f0f0;
+    }
+
+    /* Шапка с логотипом и меню */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav li {
+      cursor: pointer;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav li:hover {
+      color: #007BFF;
+    }
+
+    /* Контейнер для поиска и иконки */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 200px;
+    }
+
+    .search-bar .star-icon {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* Иконка профиля (справа) */
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 20px;
+    }
+
+    .profile-icon:hover {
+      background-color: #ccc;
+    }
+
+    /* Основная часть с карточками */
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100px;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Нижний отступ для последних элементов, чтобы не прилипали к низу экрана */
+    footer {
+      margin: 20px 0;
+      text-align: center;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Левая часть: логотип -->
+    <div class="logo">uppptip</div>
+
+    <!-- Центральная часть: меню -->
+    <nav>
+      <ul>
+        <li>Главная</li>
+        <li>События</li>
+        <li>Отчёты</li>
+        <li>Кейсы</li>
+      </ul>
+    </nav>
+
+    <!-- Правая часть: поиск + иконка профиля -->
+    <div style="display: flex; align-items: center;">
+      <div class="search-bar">
+        <input type="text" placeholder="Поиск">
+        <span class="star-icon">⭐</span>
+      </div>
+      <div class="profile-icon">
+        <span>👤</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Сетка карточек -->
+    <div class="cards-grid">
+      <div class="card">SWOT</div>
+      <div class="card">PEST</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+      <div class="card">XXXXX</div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 uppptip
+  </footer>
+
+  <script>
+    // Здесь можно добавить любой JavaScript-код.
+    // К примеру, простая реакция на клик по звёздочке:
+    document.querySelector('.star-icon').addEventListener('click', () => {
+      alert('Нажата иконка ⭐!');
+    });
+  </script>
+
+</body>
+</html>
