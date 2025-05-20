@@ -4,33 +4,47 @@
   <meta charset="UTF-8">
   <title>uppptip</title>
   <style>
+    /* СБРОС СТИЛЕЙ */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: sans-serif;
+      font-family: "Arial", sans-serif;
     }
 
     body {
-      background-color: #f0f0f0;
+      /* Лёгкий градиентный фон для приятного вида */
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
     }
 
-    /* Шапка с логотипом и меню */
+    /* ШАПКА */
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       background-color: #fff;
-      padding: 10px 20px;
-      border-bottom: 1px solid #ddd;
+      padding: 15px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     .logo {
       font-size: 1.5rem;
       font-weight: bold;
-      color: #333;
+      color: #555;
+      /* Лёгкая анимация "пульса" при загрузке */
+      animation: pulseLogo 2s infinite alternate;
     }
 
+    @keyframes pulseLogo {
+      0% { color: #555; }
+      100% { color: #007BFF; }
+    }
+
+    /* Меню */
     nav ul {
       list-style: none;
       display: flex;
@@ -40,18 +54,21 @@
     nav li {
       cursor: pointer;
       font-weight: 500;
-      transition: color 0.2s;
+      transition: color 0.3s, transform 0.3s;
+      position: relative;
     }
 
     nav li:hover {
       color: #007BFF;
+      transform: scale(1.05);
     }
 
-    /* Контейнер для поиска и иконки */
+    /* Поиск и иконка */
     .search-bar {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-right: 15px;
     }
 
     .search-bar input[type="text"] {
@@ -59,14 +76,24 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       width: 200px;
+      transition: box-shadow 0.3s;
     }
 
-    .search-bar .star-icon {
+    .search-bar input[type="text"]:focus {
+      outline: none;
+      box-shadow: 0 0 5px rgba(0,123,255,0.5);
+    }
+
+    .star-icon {
       font-size: 1.2rem;
       cursor: pointer;
+      transition: transform 0.3s;
     }
 
-    /* Иконка профиля (справа) */
+    .star-icon:hover {
+      transform: rotate(20deg) scale(1.2);
+    }
+
     .profile-icon {
       width: 40px;
       height: 40px;
@@ -76,14 +103,15 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      margin-left: 20px;
+      transition: background-color 0.3s, transform 0.3s;
     }
 
     .profile-icon:hover {
       background-color: #ccc;
+      transform: scale(1.1);
     }
 
-    /* Основная часть с карточками */
+    /* ОСНОВНАЯ ЧАСТЬ (ВИТРИНА) */
     main {
       max-width: 1200px;
       margin: 20px auto;
@@ -100,38 +128,201 @@
     .card {
       background-color: #fff;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100px;
+      height: 120px;
       font-size: 1.2rem;
       font-weight: 500;
       color: #333;
       cursor: pointer;
-      transition: background-color 0.2s, box-shadow 0.2s;
+      transition: transform 0.3s, box-shadow 0.3s;
+      /* Небольшая анимация при появлении */
+      animation: fadeInUp 0.5s ease;
     }
 
     .card:hover {
-      background-color: #f9f9f9;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* Нижний отступ для последних элементов, чтобы не прилипали к низу экрана */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* МОДАЛЬНОЕ ОКНО (карточка с шагами) */
+    .modal-overlay {
+      display: none; /* по умолчанию скрыто */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background-color: #fff;
+      width: 80%;
+      max-width: 800px;
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      animation: slideInDown 0.3s ease forwards;
+    }
+
+    @keyframes slideInDown {
+      0% {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Кнопка закрытия (X) */
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.3s;
+    }
+    .close-modal:hover {
+      color: #333;
+    }
+
+    /* Шапка модального окна с "хлебными крошками" */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .modal-header .breadcrumbs {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .modal-header .modal-profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .modal-header .modal-profile-icon:hover {
+      background-color: #ccc;
+      transform: scale(1.1);
+    }
+
+    /* Содержимое шага */
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .step-circle {
+      min-width: 40px;
+      min-height: 40px;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .step-input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 5px 10px;
+    }
+
+    .download-btn {
+      cursor: pointer;
+      color: #007BFF;
+      font-size: 1.2rem;
+      transition: transform 0.3s, color 0.3s;
+    }
+    .download-btn:hover {
+      transform: scale(1.2);
+      color: #0056b3;
+    }
+
+    .example-label {
+      margin-left: auto;
+      font-size: 0.9rem;
+      color: #999;
+      font-style: italic;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .example-label:hover {
+      color: #666;
+    }
+
+    /* Большое текстовое поле */
+    .large-textarea {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: none;
+      margin-bottom: 15px;
+      padding: 5px 10px;
+    }
+
+    /* ФУТЕР */
     footer {
       margin: 20px 0;
       text-align: center;
       color: #888;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 
+  <!-- ШАПКА -->
   <header>
-    <!-- Левая часть: логотип -->
     <div class="logo">uppptip</div>
 
-    <!-- Центральная часть: меню -->
     <nav>
       <ul>
         <li>Главная</li>
@@ -141,7 +332,6 @@
       </ul>
     </nav>
 
-    <!-- Правая часть: поиск + иконка профиля -->
     <div style="display: flex; align-items: center;">
       <div class="search-bar">
         <input type="text" placeholder="Поиск">
@@ -153,35 +343,500 @@
     </div>
   </header>
 
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
   <main>
-    <!-- Сетка карточек -->
+    <!-- Сетка карточек (3 колонки, 4 ряда = 12 карточек) -->
     <div class="cards-grid">
-      <div class="card">SWOT</div>
-      <div class="card">PEST</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
-      <div class="card">XXXXX</div>
+      <div class="card" data-modal="modal1">SWOT</div>
+      <div class="card" data-modal="modal2">PEST</div>
+      <div class="card" data-modal="modal3">XXXXX</div>
+      <div class="card" data-modal="modal4">XXXXX</div>
+      <div class="card" data-modal="modal5">XXXXX</div>
+      <div class="card" data-modal="modal6">XXXXX</div>
+      <div class="card" data-modal="modal7">XXXXX</div>
+      <div class="card" data-modal="modal8">XXXXX</div>
+      <div class="card" data-modal="modal9">XXXXX</div>
+      <div class="card" data-modal="modal10">XXXXX</div>
+      <div class="card" data-modal="modal11">XXXXX</div>
+      <div class="card" data-modal="modal12">XXXXX</div>
     </div>
   </main>
 
+  <!-- ФУТЕР -->
   <footer>
     © 2025 uppptip
   </footer>
 
+  <!-- МОДАЛЬНЫЕ ОКНА (для примера – 12 одинаковых) -->
+  <!-- При желании в каждом modalN можно изменить содержимое под конкретную задачу -->
+
+  <!-- modal1 -->
+  <div class="modal-overlay" id="modal1">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / SWOT / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <!-- Содержимое карточки (пример 4 шага) -->
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Остальные модалки (2..12). Для краткости содержимое такое же,
+       но вы можете менять текст, заголовки, шаги и т.д. -->
+  <div class="modal-overlay" id="modal2">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / PEST / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <!-- Тот же контент шагов (пример) -->
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal3">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <!-- Содержимое шагов аналогично -->
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Аналогично для modal4 ... modal12 (можно скопировать тот же блок) -->
+  <div class="modal-overlay" id="modal4">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal5">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal6">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal7">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal8">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal9">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal10">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal11">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal12">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-header">
+        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+        <div class="modal-profile-icon">👤</div>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">I</div>
+        <input type="text" class="step-input" placeholder="Описание шага I...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">II</div>
+        <input type="text" class="step-input" placeholder="Описание шага II...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+      <div class="step-row">
+        <div class="step-circle">III</div>
+        <input type="text" class="step-input" placeholder="Описание шага III...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+      <div class="step-row">
+        <div class="step-circle">IV</div>
+        <input type="text" class="step-input" placeholder="Описание шага IV...">
+        <span class="download-btn">⬇</span>
+        <span class="example-label">Пример</span>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Здесь можно добавить любой JavaScript-код.
-    // К примеру, простая реакция на клик по звёздочке:
+    // При клике на иконку звёздочки
     document.querySelector('.star-icon').addEventListener('click', () => {
       alert('Нажата иконка ⭐!');
     });
-  </script>
 
+    // Все карточки на "витрине"
+    const cards = document.querySelectorAll('.card');
+
+    // При клике на карточку открываем соответствующее модальное окно
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const modalId = card.getAttribute('data-modal');
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.style.display = 'flex'; // показать модальное окно (flex для центрирования)
+        }
+      });
+    });
+
+    // Кнопки закрытия (X) во всех модальных окнах
+    const closeButtons = document.querySelectorAll('.close-modal');
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Находим родительский .modal-overlay и скрываем
+        const modal = btn.closest('.modal-overlay');
+        modal.style.display = 'none';
+      });
+    });
+
+    // Дополнительно можно закрывать модалку по клику на подложку
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        // Закрываем, только если клик был именно по подложке (а не по внутреннему контенту)
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
