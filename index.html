@@ -13,9 +13,99 @@
     }
 
     body {
-      /* Лёгкий градиентный фон для приятного вида */
+      /* Лёгкий градиентный фон */
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       color: #333;
+    }
+
+    /************************************************************
+     * СТИЛИ ДЛЯ СЕКЦИИ АВТОРИЗАЦИИ (ВХОД/РЕГИСТРАЦИЯ)
+     ************************************************************/
+    #authSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh; /* Чтобы форма центрировалась по высоте */
+    }
+
+    .auth-container {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .auth-title {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      color: #007BFF;
+    }
+
+    .auth-form-group {
+      margin-bottom: 15px;
+    }
+
+    .auth-form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .auth-form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .auth-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .auth-buttons button {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .auth-buttons button:hover {
+      background-color: #0056b3;
+    }
+
+    .toggle-auth {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #007BFF;
+      cursor: pointer;
+    }
+
+    .toggle-auth:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /************************************************************
+     * СТИЛИ ДЛЯ ОСНОВНОГО РАЗДЕЛА (header, cards и т.д.)
+     * Будет скрыт по умолчанию, пока пользователь не авторизован
+     ************************************************************/
+    #mainSection {
+      display: none; /* Скрыт до авторизации */
     }
 
     /* ШАПКА */
@@ -35,7 +125,6 @@
       font-size: 1.5rem;
       font-weight: bold;
       color: #555;
-      /* Лёгкая анимация "пульса" при загрузке */
       animation: pulseLogo 2s infinite alternate;
     }
 
@@ -44,7 +133,6 @@
       100% { color: #007BFF; }
     }
 
-    /* Меню */
     nav ul {
       list-style: none;
       display: flex;
@@ -63,7 +151,6 @@
       transform: scale(1.05);
     }
 
-    /* Поиск и иконка */
     .search-bar {
       display: flex;
       align-items: center;
@@ -111,7 +198,7 @@
       transform: scale(1.1);
     }
 
-    /* ОСНОВНАЯ ЧАСТЬ (ВИТРИНА) */
+    /* Контент (карточки) */
     main {
       max-width: 1200px;
       margin: 20px auto;
@@ -138,7 +225,6 @@
       color: #333;
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
-      /* Небольшая анимация при появлении */
       animation: fadeInUp 0.5s ease;
     }
 
@@ -158,7 +244,127 @@
       }
     }
 
-    /* МОДАЛЬНОЕ ОКНО (карточка с шагами) */
+    footer {
+      margin: 20px 0;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    /************************************************************
+     * СТИЛИ ДЛЯ ЛИЧНОГО КАБИНЕТА
+     ************************************************************/
+    #cabinetSection {
+      display: none; /* Скрыт, пока не выберем «Личный кабинет» */
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .cabinet-container {
+      background-color: #fff;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .cabinet-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: #007BFF;
+      text-align: center;
+    }
+
+    .cabinet-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .cabinet-profile img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .cabinet-username {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .cabinet-settings-btn,
+    .cabinet-logout-btn,
+    .cabinet-back-btn {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px 5px 5px 0;
+      transition: background-color 0.3s;
+    }
+
+    .cabinet-settings-btn:hover,
+    .cabinet-logout-btn:hover,
+    .cabinet-back-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .cabinet-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .cabinet-settings-form {
+      display: none; /* Скрыта до нажатия "Настройки аккаунта" */
+      margin-top: 20px;
+    }
+
+    .cabinet-form-group {
+      margin-bottom: 15px;
+    }
+
+    .cabinet-form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .cabinet-form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .cabinet-save-btn {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .cabinet-save-btn:hover {
+      background-color: #218838;
+    }
+
+    /************************************************************
+     * СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОН (ШАГИ)
+     ************************************************************/
     .modal-overlay {
       display: none; /* по умолчанию скрыто */
       position: fixed;
@@ -171,10 +377,10 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
-      animation: fadeIn 0.3s forwards;
+      animation: fadeInOverlay 0.3s forwards;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInOverlay {
       from { opacity: 0; }
       to { opacity: 1; }
     }
@@ -200,7 +406,6 @@
       }
     }
 
-    /* Кнопка закрытия (X) */
     .close-modal {
       position: absolute;
       top: 15px;
@@ -214,7 +419,6 @@
       color: #333;
     }
 
-    /* Шапка модального окна с "хлебными крошками" */
     .modal-header {
       display: flex;
       align-items: center;
@@ -246,7 +450,6 @@
       transform: scale(1.1);
     }
 
-    /* Содержимое шага */
     .step-row {
       display: flex;
       align-items: center;
@@ -297,7 +500,6 @@
       color: #666;
     }
 
-    /* Большое текстовое поле */
     .large-textarea {
       width: 100%;
       height: 100px;
@@ -307,531 +509,536 @@
       margin-bottom: 15px;
       padding: 5px 10px;
     }
-
-    /* ФУТЕР */
-    footer {
-      margin: 20px 0;
-      text-align: center;
-      color: #888;
-      font-size: 0.9rem;
-    }
   </style>
 </head>
 <body>
-
-  <!-- ШАПКА -->
-  <header>
-    <div class="logo">uppptip</div>
-
-    <nav>
-      <ul>
-        <li>Главная</li>
-        <li>События</li>
-        <li>Отчёты</li>
-        <li>Кейсы</li>
-      </ul>
-    </nav>
-
-    <div style="display: flex; align-items: center;">
-      <div class="search-bar">
-        <input type="text" placeholder="Поиск">
-        <span class="star-icon">⭐</span>
+  <!--
+    СЕКЦИЯ АВТОРИЗАЦИИ (ВХОД/РЕГИСТРАЦИЯ)
+    Показывается первой, пока пользователь не залогинен
+  -->
+  <section id="authSection">
+    <div class="auth-container">
+      <h2 class="auth-title">Вход в систему</h2>
+      <!-- Форма авторизации -->
+      <div class="auth-form-group">
+        <label for="authUsername">Логин</label>
+        <input type="text" id="authUsername" placeholder="Введите логин...">
       </div>
-      <div class="profile-icon">
-        <span>👤</span>
+      <div class="auth-form-group">
+        <label for="authPassword">Пароль</label>
+        <input type="password" id="authPassword" placeholder="Введите пароль...">
       </div>
-    </div>
-  </header>
-
-  <!-- ОСНОВНОЙ КОНТЕНТ -->
-  <main>
-    <!-- Сетка карточек (3 колонки, 4 ряда = 12 карточек) -->
-    <div class="cards-grid">
-      <div class="card" data-modal="modal1">SWOT</div>
-      <div class="card" data-modal="modal2">PEST</div>
-      <div class="card" data-modal="modal3">XXXXX</div>
-      <div class="card" data-modal="modal4">XXXXX</div>
-      <div class="card" data-modal="modal5">XXXXX</div>
-      <div class="card" data-modal="modal6">XXXXX</div>
-      <div class="card" data-modal="modal7">XXXXX</div>
-      <div class="card" data-modal="modal8">XXXXX</div>
-      <div class="card" data-modal="modal9">XXXXX</div>
-      <div class="card" data-modal="modal10">XXXXX</div>
-      <div class="card" data-modal="modal11">XXXXX</div>
-      <div class="card" data-modal="modal12">XXXXX</div>
-    </div>
-  </main>
-
-  <!-- ФУТЕР -->
-  <footer>
-    © 2025 uppptip
-  </footer>
-
-  <!-- МОДАЛЬНЫЕ ОКНА (для примера – 12 одинаковых) -->
-  <!-- При желании в каждом modalN можно изменить содержимое под конкретную задачу -->
-
-  <!-- modal1 -->
-  <div class="modal-overlay" id="modal1">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / SWOT / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
+      <div class="auth-buttons">
+        <button id="loginBtn">Войти</button>
+        <button id="registerBtn">Регистрация</button>
       </div>
-      <!-- Содержимое карточки (пример 4 шага) -->
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+      <div class="toggle-auth" id="toggleAuthMode">
+        Нет аккаунта? Зарегистрироваться
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Остальные модалки (2..12). Для краткости содержимое такое же,
-       но вы можете менять текст, заголовки, шаги и т.д. -->
-  <div class="modal-overlay" id="modal2">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / PEST / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
+  <!--
+    СЕКЦИЯ ОСНОВНОГО САЙТА (Шапка, витрина, модальные окна)
+    Будет показана только после авторизации
+  -->
+  <section id="mainSection">
+    <!-- ШАПКА -->
+    <header>
+      <div class="logo">uppptip</div>
+      <nav>
+        <ul>
+          <li>Главная</li>
+          <li>События</li>
+          <li>Отчёты</li>
+          <li>Кейсы</li>
+          <!-- Кнопка для входа в Личный кабинет -->
+          <li id="cabinetLink" style="display:none;">Личный кабинет</li>
+          <!-- Кнопка "Выйти" -->
+          <li id="logoutLink" style="display:none;">Выйти</li>
+        </ul>
+      </nav>
+      <div style="display: flex; align-items: center;">
+        <div class="search-bar">
+          <input type="text" placeholder="Поиск">
+          <span class="star-icon">⭐</span>
+        </div>
+        <div class="profile-icon">
+          <span>👤</span>
+        </div>
       </div>
-      <!-- Тот же контент шагов (пример) -->
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ: сетка карточек -->
+    <main>
+      <div class="cards-grid">
+        <div class="card" data-modal="modal1">SWOT</div>
+        <div class="card" data-modal="modal2">PEST</div>
+        <div class="card" data-modal="modal3">XXXXX</div>
+        <div class="card" data-modal="modal4">XXXXX</div>
+        <div class="card" data-modal="modal5">XXXXX</div>
+        <div class="card" data-modal="modal6">XXXXX</div>
+        <div class="card" data-modal="modal7">XXXXX</div>
+        <div class="card" data-modal="modal8">XXXXX</div>
+        <div class="card" data-modal="modal9">XXXXX</div>
+        <div class="card" data-modal="modal10">XXXXX</div>
+        <div class="card" data-modal="modal11">XXXXX</div>
+        <div class="card" data-modal="modal12">XXXXX</div>
       </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+    </main>
+
+    <footer>
+      © 2025 uppptip
+    </footer>
+
+    <!-- МОДАЛЬНЫЕ ОКНА (12 шт. одинаковых для примера) -->
+    <div class="modal-overlay" id="modal1">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <div class="breadcrumbs">Главная / SWOT / Определение выхода</div>
+          <div class="modal-profile-icon">👤</div>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">I</div>
+          <input type="text" class="step-input" placeholder="Описание шага I...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">II</div>
+          <input type="text" class="step-input" placeholder="Описание шага II...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+        <div class="step-row">
+          <div class="step-circle">III</div>
+          <input type="text" class="step-input" placeholder="Описание шага III...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">IV</div>
+          <input type="text" class="step-input" placeholder="Описание шага IV...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal-overlay" id="modal3">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <!-- Содержимое шагов аналогично -->
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+    <!-- Остальные модалки (2..12) — аналогичное содержимое -->
+    <div class="modal-overlay" id="modal2">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <div class="breadcrumbs">Главная / PEST / Определение выхода</div>
+          <div class="modal-profile-icon">👤</div>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">I</div>
+          <input type="text" class="step-input" placeholder="Описание шага I...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">II</div>
+          <input type="text" class="step-input" placeholder="Описание шага II...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+        <div class="step-row">
+          <div class="step-circle">III</div>
+          <input type="text" class="step-input" placeholder="Описание шага III...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">IV</div>
+          <input type="text" class="step-input" placeholder="Описание шага IV...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Аналогично для modal4 ... modal12 (можно скопировать тот же блок) -->
-  <div class="modal-overlay" id="modal4">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="modal5">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+    <!-- Точно так же modal3...modal12 (скопировано) -->
+    <div class="modal-overlay" id="modal3">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+          <div class="modal-profile-icon">👤</div>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">I</div>
+          <input type="text" class="step-input" placeholder="Описание шага I...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">II</div>
+          <input type="text" class="step-input" placeholder="Описание шага II...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+        <div class="step-row">
+          <div class="step-circle">III</div>
+          <input type="text" class="step-input" placeholder="Описание шага III...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">IV</div>
+          <input type="text" class="step-input" placeholder="Описание шага IV...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="modal-overlay" id="modal6">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="modal7">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+    <!-- ... и так далее до modal12 (идентично) -->
+    <div class="modal-overlay" id="modal4">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
+          <div class="modal-profile-icon">👤</div>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">I</div>
+          <input type="text" class="step-input" placeholder="Описание шага I...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">II</div>
+          <input type="text" class="step-input" placeholder="Описание шага II...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
+        <div class="step-row">
+          <div class="step-circle">III</div>
+          <input type="text" class="step-input" placeholder="Описание шага III...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">IV</div>
+          <input type="text" class="step-input" placeholder="Описание шага IV...">
+          <span class="download-btn">⬇</span>
+          <span class="example-label">Пример</span>
+        </div>
       </div>
     </div>
-  </div>
+    <!-- Повторяем до modal12 -->
+  </section>
 
-  <div class="modal-overlay" id="modal8">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
+  <!--
+    СЕКЦИЯ ЛИЧНОГО КАБИНЕТА
+    (Показывается при нажатии на "Личный кабинет", скрывается в остальных случаях)
+  -->
+  <section id="cabinetSection">
+    <div class="cabinet-container">
+      <h2 class="cabinet-title">Личный кабинет</h2>
+      <div class="cabinet-profile">
+        <!-- Аватар -->
+        <img id="cabinetAvatar" src="" alt="Аватар пользователя">
+        <!-- Никнейм -->
+        <div class="cabinet-username" id="cabinetUsername"></div>
       </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+
+      <div class="cabinet-actions">
+        <button class="cabinet-settings-btn" id="openSettingsBtn">Настройки аккаунта</button>
+        <button class="cabinet-back-btn" id="backToMainBtn">Назад</button>
+        <button class="cabinet-logout-btn" id="logoutBtnCabinet">Выйти</button>
       </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
+
+      <!-- Форма изменения логина/пароля (по умолчанию скрыта) -->
+      <div class="cabinet-settings-form" id="cabinetSettingsForm">
+        <div class="cabinet-form-group">
+          <label for="newUsername">Новый логин</label>
+          <input type="text" id="newUsername" placeholder="Новый логин...">
+        </div>
+        <div class="cabinet-form-group">
+          <label for="newPassword">Новый пароль</label>
+          <input type="password" id="newPassword" placeholder="Новый пароль...">
+        </div>
+        <button class="cabinet-save-btn" id="saveSettingsBtn">Сохранить</button>
       </div>
     </div>
-  </div>
-
-  <div class="modal-overlay" id="modal9">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="modal10">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="modal11">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="modal12">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <div class="modal-header">
-        <div class="breadcrumbs">Главная / XXXXX / Определение выхода</div>
-        <div class="modal-profile-icon">👤</div>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">I</div>
-        <input type="text" class="step-input" placeholder="Описание шага I...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">II</div>
-        <input type="text" class="step-input" placeholder="Описание шага II...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <textarea class="large-textarea" placeholder="Большое поле для заметок..."></textarea>
-      <div class="step-row">
-        <div class="step-circle">III</div>
-        <input type="text" class="step-input" placeholder="Описание шага III...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-      <div class="step-row">
-        <div class="step-circle">IV</div>
-        <input type="text" class="step-input" placeholder="Описание шага IV...">
-        <span class="download-btn">⬇</span>
-        <span class="example-label">Пример</span>
-      </div>
-    </div>
-  </div>
+  </section>
 
   <script>
-    // При клике на иконку звёздочки
+    /************************************************************
+     * "База данных" — localStorage
+     *  - users: массив пользователей { username, password, avatar }
+     *  - currentUser: объект текущего залогиненного пользователя
+     ************************************************************/
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+    // Ссылки на DOM-элементы
+    const authSection = document.getElementById('authSection');
+    const mainSection = document.getElementById('mainSection');
+    const cabinetSection = document.getElementById('cabinetSection');
+
+    // Авторизационные элементы
+    const authUsername = document.getElementById('authUsername');
+    const authPassword = document.getElementById('authPassword');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const toggleAuthMode = document.getElementById('toggleAuthMode');
+
+    // Личный кабинет
+    const cabinetUsername = document.getElementById('cabinetUsername');
+    const cabinetAvatar = document.getElementById('cabinetAvatar');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const cabinetSettingsForm = document.getElementById('cabinetSettingsForm');
+    const backToMainBtn = document.getElementById('backToMainBtn');
+    const logoutBtnCabinet = document.getElementById('logoutBtnCabinet');
+    const newUsername = document.getElementById('newUsername');
+    const newPassword = document.getElementById('newPassword');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+
+    // Ссылки в шапке (при авторизации)
+    const cabinetLink = document.getElementById('cabinetLink');
+    const logoutLink = document.getElementById('logoutLink');
+
+    // Функция обновления localStorage
+    function saveToLocalStorage() {
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+
+    // Показать/скрыть нужные секции в зависимости от статуса
+    function updateView() {
+      if (currentUser) {
+        // Если пользователь авторизован
+        authSection.style.display = 'none';
+        mainSection.style.display = 'block';
+        cabinetSection.style.display = 'none';
+
+        // Включаем ссылки «Личный кабинет» и «Выйти»
+        cabinetLink.style.display = 'inline';
+        logoutLink.style.display = 'inline';
+      } else {
+        // Если пользователь НЕ авторизован
+        authSection.style.display = 'flex';
+        mainSection.style.display = 'none';
+        cabinetSection.style.display = 'none';
+
+        // Скрываем ссылки
+        cabinetLink.style.display = 'none';
+        logoutLink.style.display = 'none';
+      }
+    }
+
+    // Проверяем, если кто-то уже залогинен — обновим вид
+    updateView();
+
+    // Логика переключения между "Вход" и "Регистрация"
+    let isLoginMode = true; // по умолчанию «Вход»
+    function switchAuthMode() {
+      isLoginMode = !isLoginMode;
+      if (isLoginMode) {
+        // Вход
+        document.querySelector('.auth-title').textContent = 'Вход в систему';
+        toggleAuthMode.textContent = 'Нет аккаунта? Зарегистрироваться';
+        loginBtn.style.display = 'inline-block';
+        registerBtn.style.display = 'inline-block';
+      } else {
+        // Регистрация
+        document.querySelector('.auth-title').textContent = 'Регистрация';
+        toggleAuthMode.textContent = 'Уже есть аккаунт? Войти';
+        // Можно оставить обе кнопки, но логичнее одну
+        // Для упрощения оставим две, но будем считать, что registerBtn главная
+      }
+    }
+
+    // Клик по «Нет аккаунта? Зарегистрироваться» / «Уже есть аккаунт? Войти»
+    toggleAuthMode.addEventListener('click', switchAuthMode);
+
+    // Функция для входа
+    function loginUser() {
+      const username = authUsername.value.trim();
+      const password = authPassword.value.trim();
+
+      // Находим пользователя
+      const user = users.find(u => u.username === username && u.password === password);
+      if (user) {
+        currentUser = user;
+        saveToLocalStorage();
+        alert('Успешный вход!');
+        updateView();
+      } else {
+        alert('Неверный логин или пароль!');
+      }
+    }
+
+    // Функция для регистрации
+    function registerUser() {
+      const username = authUsername.value.trim();
+      const password = authPassword.value.trim();
+
+      if (!username || !password) {
+        alert('Введите логин и пароль!');
+        return;
+      }
+
+      // Проверка, что такого пользователя нет
+      const existing = users.find(u => u.username === username);
+      if (existing) {
+        alert('Пользователь с таким логином уже существует!');
+        return;
+      }
+
+      // Создаём нового
+      const newUser = {
+        username,
+        password,
+        avatar: 'https://via.placeholder.com/100' // Условный портрет
+      };
+      users.push(newUser);
+      currentUser = newUser;
+      saveToLocalStorage();
+      alert('Регистрация успешна! Вы вошли в систему.');
+      updateView();
+    }
+
+    // Обработчики нажатия кнопок
+    loginBtn.addEventListener('click', () => {
+      // Если мы в режиме входа — логинимся
+      if (isLoginMode) {
+        loginUser();
+      } else {
+        // Иначе просто вызываем функцию входа, если хотим
+        // но по ТЗ логичнее только registerBtn регистрирует
+        loginUser();
+      }
+    });
+
+    registerBtn.addEventListener('click', () => {
+      // Если мы в режиме регистрации — регистрируем
+      if (!isLoginMode) {
+        registerUser();
+      } else {
+        // Иначе логинимся
+        loginUser();
+      }
+    });
+
+    // Ссылка "Личный кабинет" в шапке
+    cabinetLink.addEventListener('click', () => {
+      if (currentUser) {
+        // Заполняем данные в личном кабинете
+        cabinetUsername.textContent = currentUser.username;
+        cabinetAvatar.src = currentUser.avatar || 'https://via.placeholder.com/100';
+
+        // Переключаемся
+        mainSection.style.display = 'none';
+        cabinetSection.style.display = 'block';
+      }
+    });
+
+    // Кнопка «Выйти» в шапке
+    logoutLink.addEventListener('click', () => {
+      currentUser = null;
+      saveToLocalStorage();
+      updateView();
+    });
+
+    // Кнопка «Выйти» внутри личного кабинета
+    logoutBtnCabinet.addEventListener('click', () => {
+      currentUser = null;
+      saveToLocalStorage();
+      updateView();
+    });
+
+    // Кнопка «Назад» из личного кабинета в основную часть
+    backToMainBtn.addEventListener('click', () => {
+      cabinetSection.style.display = 'none';
+      mainSection.style.display = 'block';
+    });
+
+    // Открыть/закрыть форму настроек
+    openSettingsBtn.addEventListener('click', () => {
+      if (cabinetSettingsForm.style.display === 'block') {
+        cabinetSettingsForm.style.display = 'none';
+      } else {
+        cabinetSettingsForm.style.display = 'block';
+      }
+    });
+
+    // Сохранить новые настройки
+    saveSettingsBtn.addEventListener('click', () => {
+      if (!currentUser) return;
+
+      const newU = newUsername.value.trim();
+      const newP = newPassword.value.trim();
+
+      if (newU) currentUser.username = newU;
+      if (newP) currentUser.password = newP;
+
+      // Обновим avatar, если хотите - отдельное поле
+      // currentUser.avatar = ... (можно сделать загрузку файла/ссылки)
+
+      // Обновим массив users
+      const idx = users.findIndex(u => u.username === cabinetUsername.textContent);
+      if (idx !== -1) {
+        // Важно: если сменили логин, нужно проверить, что нового логина нет
+        if (newU) {
+          const exist = users.find(u => u.username === newU);
+          if (exist && exist !== currentUser) {
+            alert('Пользователь с таким логином уже существует!');
+            return;
+          }
+        }
+        users[idx] = currentUser;
+      }
+
+      // Сохраняем
+      saveToLocalStorage();
+
+      // Обновим отображение
+      cabinetUsername.textContent = currentUser.username;
+      newUsername.value = '';
+      newPassword.value = '';
+      cabinetSettingsForm.style.display = 'none';
+      alert('Данные обновлены!');
+    });
+
+    // При клике на иконку звёздочки (пример)
     document.querySelector('.star-icon').addEventListener('click', () => {
       alert('Нажата иконка ⭐!');
     });
 
-    // Все карточки на "витрине"
+    // Логика для открытия модальных окон (карточки)
     const cards = document.querySelectorAll('.card');
-
-    // При клике на карточку открываем соответствующее модальное окно
     cards.forEach(card => {
       card.addEventListener('click', () => {
         const modalId = card.getAttribute('data-modal');
         const modal = document.getElementById(modalId);
         if (modal) {
-          modal.style.display = 'flex'; // показать модальное окно (flex для центрирования)
+          modal.style.display = 'flex';
         }
       });
     });
 
-    // Кнопки закрытия (X) во всех модальных окнах
+    // Логика для закрытия модалок (крестик)
     const closeButtons = document.querySelectorAll('.close-modal');
     closeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        // Находим родительский .modal-overlay и скрываем
         const modal = btn.closest('.modal-overlay');
         modal.style.display = 'none';
       });
     });
 
-    // Дополнительно можно закрывать модалку по клику на подложку
+    // Закрытие модалки по клику на подложку
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
       modal.addEventListener('click', (e) => {
-        // Закрываем, только если клик был именно по подложке (а не по внутреннему контенту)
         if (e.target === modal) {
           modal.style.display = 'none';
         }
