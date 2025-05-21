@@ -49,8 +49,9 @@ npm install -g localtunnel
 2. Создайте `.env`:
 
 ```
-JWT_SECRET=your_jwt_secret
-LT_SUBDOMAIN=your_custom_subdomain
+JWT_SECRET=super_jwt_secret
+PORT=3000
+LT_SUBDOMAIN=mysubdomain
 ```
 
 3. Запустите:
@@ -68,7 +69,7 @@ python server.py
 LocalTunnel даёт временный публичный домен для тестов или демонстрации:
 
 * ваш поддомен будет доступен по адресу
-  `https://your_custom_subdomain.loca.lt`
+  `https://mysubdomain.loca.lt/`
 
 * при входе в домен потребуется пароль — это **нормально** и защищает от DDoS
 
