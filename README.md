@@ -24,10 +24,15 @@
 
 uppttip/
 ├── static/        	# Фронтенд: HTML, CSS, JS
+
 │   └── index.html 	# SPA-интерфейс
+
 ├── server.py      	# Бэкенд на FastAPI (JWT + SQLite)
+
 ├── data.db        	# Автоматически создаваемая база
+
 ├── .env           	# Переменные окружения (секреты, поддомен)
+
 └── README.md      	# Этот файл
 
 ---
