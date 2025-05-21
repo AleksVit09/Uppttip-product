@@ -242,432 +242,640 @@ footer{padding:18px 0;text-align:center;color:var(--txt-faded);font-size:.9rem}
     </div>
   </section>
 
-  <!-- ======= СКРИПТ ======= -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script>
-  /* ---------- LS и переменные ---------- */
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-  let favCards = JSON.parse(localStorage.getItem('favCards')) || [];
-  let events = JSON.parse(localStorage.getItem('events')) || [];
-  let theme = localStorage.getItem('theme') || 'light';
-  function saveLS(){
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    localStorage.setItem('favCards', JSON.stringify(favCards));
-    localStorage.setItem('events', JSON.stringify(events));
-  }
+<!-- ======= СКРИПТ ======= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* ---------- API, переменные и helpers ---------- */
+const API = '/api';
 
-  /* ---------- Авторизация ---------- */
-  const authSection = document.getElementById('authSection');
-  const siteWrapper = document.getElementById('siteWrapper');
-  const cabinetSection = document.getElementById('cabinetSection');
+let token       = localStorage.getItem('token') || null;
+let currentUser = null;
 
-  const loginTab = document.getElementById('loginTab'),
-        registerTab = document.getElementById('registerTab'),
-        toggleEmoji = document.getElementById('toggleEmoji');
-  const loginForm = document.getElementById('loginForm'),
-        registerForm = document.getElementById('registerForm');
-  const loginUsername = document.getElementById('loginUsername'),
-        loginPassword = document.getElementById('loginPassword');
-  const regUsername = document.getElementById('regUsername'),
-        regPassword = document.getElementById('regPassword');
-  const loginBtn = document.getElementById('loginBtn'),
-        registerBtn = document.getElementById('registerBtn');
+/* данные приложения */
+let cards     = [];          /* карточки с сервера (или дефолт ниже)            */
+let favCards  = [];          /* избранные id                                    */
+let events    = [];          /* события                                         */
+let userSteps = new Map();   /* step_id → {input, example}                      */
 
-  function updateView(){
-    if(currentUser){
-      authSection.style.display = 'none';
-      siteWrapper.style.display = 'flex';
-    } else {
-      authSection.style.display = 'flex';
-      siteWrapper.style.display = 'none';
+/* тема берём из localStorage как запасной вариант, позже подменим из профиля */
+let theme     = localStorage.getItem('theme') || 'light';
+
+/* fallback-карточки – гость сможет по-прежнему «поиграться» без регистрации */
+cards = [
+  {id:'swot', title:'SWOT-анализ', cat:'analitica', steps:[
+    {id:-1, idx:0, text:'Сильные стороны'},
+    {id:-1, idx:1, text:'Слабые стороны'},
+    {id:-1, idx:2, text:'Возможности'},
+    {id:-1, idx:3, text:'Угрозы'}
+  ]},
+  {id:'pest', title:'PEST-анализ', cat:'analitica', steps:[
+    {id:-1, idx:0, text:'Политические'},
+    {id:-1, idx:1, text:'Экономические'},
+    {id:-1, idx:2, text:'Социальные'},
+    {id:-1, idx:3, text:'Технологические'}
+  ]},
+  {id:'porter', title:'5 сил Портера', cat:'analitica', steps:[
+    {id:-1, idx:0, text:'Сила поставщиков'},
+    {id:-1, idx:1, text:'Сила покупателей'},
+    {id:-1, idx:2, text:'Новые игроки'},
+    {id:-1, idx:3, text:'Заменители'},
+    {id:-1, idx:4, text:'Конкуренция'}
+  ]},
+  {id:'lean', title:'Lean Canvas', cat:'plan', steps:[
+    {id:-1, idx:0, text:'Проблемы'},
+    {id:-1, idx:1, text:'Сегменты'},
+    {id:-1, idx:2, text:'УТП'},
+    {id:-1, idx:3, text:'Решение'},
+    {id:-1, idx:4, text:'Каналы'},
+    {id:-1, idx:5, text:'Доходы'},
+    {id:-1, idx:6, text:'Затраты'}
+  ]},
+  {id:'bmc', title:'Business Model Canvas', cat:'plan', steps:[
+    {id:-1, idx:0, text:'ЦП'},
+    {id:-1, idx:1, text:'Клиенты'},
+    {id:-1, idx:2, text:'Каналы'},
+    {id:-1, idx:3, text:'Отношения'},
+    {id:-1, idx:4, text:'Доходы'},
+    {id:-1, idx:5, text:'Ресурсы'},
+    {id:-1, idx:6, text:'Деятельность'},
+    {id:-1, idx:7, text:'Партнёры'},
+    {id:-1, idx:8, text:'Затраты'}
+  ]},
+  {id:'vpc', title:'Value Proposition Canvas', cat:'plan', steps:[
+    {id:-1, idx:0, text:'Профиль'},
+    {id:-1, idx:1, text:'Задачи'},
+    {id:-1, idx:2, text:'Боли'},
+    {id:-1, idx:3, text:'Выгоды'},
+    {id:-1, idx:4, text:'Продукт'},
+    {id:-1, idx:5, text:'Устранители болей'},
+    {id:-1, idx:6, text:'Создатели выгод'}
+  ]},
+  {id:'smart', title:'SMART-цели', cat:'monitor', steps:[
+    {id:-1, idx:0, text:'Specific'},
+    {id:-1, idx:1, text:'Measurable'},
+    {id:-1, idx:2, text:'Achievable'},
+    {id:-1, idx:3, text:'Relevant'},
+    {id:-1, idx:4, text:'Time-bound'}
+  ]},
+  {id:'okr', title:'OKR-план', cat:'monitor', steps:[
+    {id:-1, idx:0, text:'Objective'},
+    {id:-1, idx:1, text:'Key Result 1'},
+    {id:-1, idx:2, text:'Key Result 2'},
+    {id:-1, idx:3, text:'Key Result 3'}
+  ]},
+  {id:'raci', title:'RACI-матрица', cat:'monitor', steps:[
+    {id:-1, idx:0, text:'Задача'},
+    {id:-1, idx:1, text:'R'},
+    {id:-1, idx:2, text:'A'},
+    {id:-1, idx:3, text:'C'},
+    {id:-1, idx:4, text:'I'}
+  ]},
+  {id:'kpi', title:'KPI-дашборд', cat:'monitor', steps:[
+    {id:-1, idx:0, text:'Метрика'},
+    {id:-1, idx:1, text:'Текущий'},
+    {id:-1, idx:2, text:'Цель'},
+    {id:-1, idx:3, text:'Источник'}
+  ]},
+  {id:'risk', title:'Матрица рисков', cat:'analitica', steps:[
+    {id:-1, idx:0, text:'Риск'},
+    {id:-1, idx:1, text:'Вероятность'},
+    {id:-1, idx:2, text:'Влияние'},
+    {id:-1, idx:3, text:'Стратегия'}
+  ]},
+  {id:'stake', title:'Карта стейкхолдеров', cat:'analitica', steps:[
+    {id:-1, idx:0, text:'Стейкхолдер'},
+    {id:-1, idx:1, text:'Интерес'},
+    {id:-1, idx:2, text:'Влияние'},
+    {id:-1, idx:3, text:'Стратегия'}
+  ]},
+  {id:'moscow', title:'MoSCoW-приоритизация', cat:'plan', steps:[
+    {id:-1, idx:0, text:'Must'},
+    {id:-1, idx:1, text:'Should'},
+    {id:-1, idx:2, text:'Could'},
+    {id:-1, idx:3, text:'Won’t'}
+  ]},
+  {id:'usm', title:'User Story Map', cat:'plan', steps:[
+    {id:-1, idx:0, text:'Эпики'},
+    {id:-1, idx:1, text:'Действия'},
+    {id:-1, idx:2, text:'User Stories'},
+    {id:-1, idx:3, text:'Релизы'}
+  ]},
+  {id:'gantt', title:'Гантт-диаграмма', cat:'plan', steps:[
+    {id:-1, idx:0, text:'Задача'},
+    {id:-1, idx:1, text:'Начало'},
+    {id:-1, idx:2, text:'Конец'},
+    {id:-1, idx:3, text:'Ответственный'},
+    {id:-1, idx:4, text:'%'}
+  ]},
+  {id:'bsc', title:'Balanced Scorecard', cat:'monitor', steps:[
+    {id:-1, idx:0, text:'Финансы'},
+    {id:-1, idx:1, text:'Клиенты'},
+    {id:-1, idx:2, text:'Процессы'},
+    {id:-1, idx:3, text:'Обучение'}
+  ]}
+];
+
+
+/* универсальный запрос */
+async function api(path, opts = {}) {
+  const init = {method:'GET', ...opts};
+  init.headers ||= {};
+  if(token) init.headers.Authorization = 'Bearer '+token;
+  if(init.body && !(init.body instanceof FormData))
+    init.headers['Content-Type'] = 'application/json';
+  const r = await fetch(API+path, init);
+  if(!r.ok){
+    if(r.status === 401){               /* токен протух – вылогиниваемся */
+      logout(); updateView();
+      alert('Сессия истекла. Войдите заново.'); 
+      throw new Error('unauthorized');
     }
-    cabinetSection.style.display = 'none';
+    throw new Error(await r.text());
   }
-  updateView();
+  return r.status===204 ? null : r.json();
+}
+function saveToken(){ token ? localStorage.setItem('token',token)
+                            : localStorage.removeItem('token'); }
+function logout(){
+  token = null; currentUser = null;
+  cards = []; favCards = []; events = []; userSteps.clear();
+  saveToken();
+}
+function roman(i){ return ['I','II','III','IV','V','VI','VII','VIII','IX','X'][i] || i+1; }
+function showToast(msg){
+  toast.textContent = msg; toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3e3);
+}
 
-  function showLogin(){
-    loginTab.classList.add('active');
-    registerTab.classList.remove('active');
-    loginForm.style.display = 'block';
-    registerForm.style.display = 'none';
+/* ---------- DOM-ссылки (остались без изменений) ---------- */
+const authSection   = document.getElementById('authSection');
+const siteWrapper   = document.getElementById('siteWrapper');
+const cabinetSection= document.getElementById('cabinetSection');
+
+const loginTab = document.getElementById('loginTab'),
+      registerTab = document.getElementById('registerTab'),
+      toggleEmoji = document.getElementById('toggleEmoji');
+const loginForm = document.getElementById('loginForm'),
+      registerForm = document.getElementById('registerForm');
+const loginUsername = document.getElementById('loginUsername'),
+      loginPassword = document.getElementById('loginPassword');
+const regUsername = document.getElementById('regUsername'),
+      regPassword = document.getElementById('regPassword');
+const loginBtn = document.getElementById('loginBtn'),
+      registerBtn = document.getElementById('registerBtn');
+
+/* ---------- Авторизация / регистрация ---------- */
+function updateView(){
+  if(currentUser){
+    authSection.style.display='none';
+    siteWrapper.style.display='flex';
+  }else{
+    authSection.style.display='flex';
+    siteWrapper.style.display='none';
   }
-  function showRegister(){
-    registerTab.classList.add('active');
-    loginTab.classList.remove('active');
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'block';
+  cabinetSection.style.display='none';
+}
+updateView();
+
+function showLogin(){
+  loginTab.classList.add('active'); registerTab.classList.remove('active');
+  loginForm.style.display='block'; registerForm.style.display='none';
+}
+function showRegister(){
+  registerTab.classList.add('active'); loginTab.classList.remove('active');
+  loginForm.style.display='none'; registerForm.style.display='block';
+}
+loginTab.onclick = showLogin;
+registerTab.onclick = showRegister;
+toggleEmoji.onclick = ()=> loginForm.style.display==='block'? showRegister() : showLogin();
+
+/* Вход */
+loginBtn.onclick = async ()=>{
+  const u = loginUsername.value.trim(), p = loginPassword.value.trim();
+  if(!u || !p) return alert('Введите данные');
+  try{
+    const d = await api('/login', {method:'POST', body:JSON.stringify({username:u,password:p})});
+    token = d.token; saveToken(); currentUser = d.user; theme = d.user.theme;
+    await loadInitialData(); updateView(); initAfterLogin();
+  }catch(e){ alert('Неверный логин или пароль'); }
+};
+
+/* Регистрация */
+registerBtn.onclick = async ()=>{
+  const u = regUsername.value.trim(), p = regPassword.value.trim();
+  if(!u || !p) return alert('Введите данные');
+  try{
+    const d = await api('/register',{method:'POST',body:JSON.stringify({username:u,password:p})});
+    token = d.token; saveToken(); currentUser = d.user; theme = d.user.theme;
+    await loadInitialData(); updateView(); initAfterLogin();
+  }catch(e){
+    if(e.message.includes('Username')) alert('Логин занят');
+    else alert('Ошибка регистрации');
   }
-  loginTab.onclick = showLogin;
-  registerTab.onclick = showRegister;
-  toggleEmoji.onclick = () => {
-    loginForm.style.display === 'block' ? showRegister() : showLogin();
-  };
+};
 
-  loginBtn.onclick = () => {
-    const u = loginUsername.value.trim(), p = loginPassword.value.trim();
-    const me = users.find(x => x.username === u && x.password === p);
-    if(me){
-      currentUser = me;
-      saveLS();
-      updateView();
-      initAfterLogin();
-    } else alert('Неверный логин/пароль');
-  };
-  registerBtn.onclick = () => {
-    const u = regUsername.value.trim(), p = regPassword.value.trim();
-    if(!u || !p) return alert('Введите данные');
-    if(users.some(x => x.username === u)) return alert('Логин занят');
-    currentUser = { username: u, password: p, avatar: '' };
-    users.push(currentUser);
-    saveLS();
-    updateView();
-    initAfterLogin();
-  };
+/* ---------- Начальные данные для авторизованного пользователя ---------- */
+async function loadInitialData(){
+  const [c,f,e,us] = await Promise.all([
+    api('/cards'),
+    api('/favorites'),
+    api('/events'),
+    api('/user_steps')
+  ]);
+  cards = c; favCards = f; events = e;
+  userSteps = new Map(us.map(r=>[r.step_id,{input:r.input,example:r.example}]));
+}
 
-  /* ---------- Кабинет ---------- */
-  const profileIcon = document.getElementById('profileIcon');
-  const cabinetUsername = document.getElementById('cabinetUsername'),
-        cabinetAvatar = document.getElementById('cabinetAvatar'),
-        cabinetEmoji = document.getElementById('cabinetEmoji');
-  const openSettingsBtn = document.getElementById('openSettingsBtn'),
-        backToMainBtn = document.getElementById('backToMainBtn'),
-        logoutBtnCabinet = document.getElementById('logoutBtnCabinet'),
-        cabinetSettingsForm = document.getElementById('cabinetSettingsForm'),
-        newUsername = document.getElementById('newUsername'),
-        newPassword = document.getElementById('newPassword'),
-        avatarFile = document.getElementById('avatarFile');
+/* ---------- Кабинет профиля ---------- */
+const profileIcon     = document.getElementById('profileIcon');
+const cabinetUsername = document.getElementById('cabinetUsername'),
+      cabinetAvatar   = document.getElementById('cabinetAvatar'),
+      cabinetEmoji    = document.getElementById('cabinetEmoji');
+const openSettingsBtn = document.getElementById('openSettingsBtn'),
+      backToMainBtn   = document.getElementById('backToMainBtn'),
+      logoutBtnCabinet= document.getElementById('logoutBtnCabinet'),
+      cabinetSettingsForm = document.getElementById('cabinetSettingsForm'),
+      newUsername = document.getElementById('newUsername'),
+      newPassword = document.getElementById('newPassword'),
+      avatarFile  = document.getElementById('avatarFile');
 
-  function updAvatar(){
-    if(currentUser?.avatar){
-      cabinetAvatar.src = currentUser.avatar;
-      cabinetAvatar.style.display = 'block';
-      cabinetEmoji.style.display = 'none';
-    } else {
-      cabinetAvatar.style.display = 'none';
-      cabinetEmoji.style.display = 'block';
-    }
+function updAvatar(){
+  if(currentUser?.avatar){
+    cabinetAvatar.src = currentUser.avatar.startsWith('data:')
+        ? currentUser.avatar
+        : `data:image/*;base64,${currentUser.avatar}`;   // ← обязательно в бектиках!
+
+    cabinetAvatar.style.display='block';
+    cabinetEmoji.style.display='none';
+  }else{
+    cabinetAvatar.style.display='none';
+    cabinetEmoji.style.display='block';
   }
-  profileIcon.onclick = () => {
-    if(!currentUser) return;
-    cabinetUsername.textContent = currentUser.username;
-    updAvatar();
-    siteWrapper.style.display = 'none';
-    cabinetSection.style.display = 'block';
-  };
-  backToMainBtn.onclick = () => {
-    cabinetSection.style.display = 'none';
-    siteWrapper.style.display = 'flex';
-  };
-  logoutBtnCabinet.onclick = () => {
-    currentUser = null;
-    saveLS();
-    updateView();
-  };
+}
+profileIcon.onclick = ()=>{
+  if(!currentUser) return;
+  cabinetUsername.textContent=currentUser.username;
+  updAvatar();
+  siteWrapper.style.display='none';
+  cabinetSection.style.display='block';
+};
+backToMainBtn.onclick = ()=>{
+  cabinetSection.style.display='none';
+  siteWrapper.style.display='flex';
+};
+logoutBtnCabinet.onclick = ()=>{ logout(); updateView(); };
 
-  openSettingsBtn.onclick = () => {
-    cabinetSettingsForm.style.display =
-      cabinetSettingsForm.style.display === 'block' ? 'none' : 'block';
-  };
-  document.getElementById('saveSettingsBtn').onclick = () => {
-    if(!currentUser) return;
-    const nu = newUsername.value.trim(),
-          np = newPassword.value.trim();
-    if(nu && nu !== currentUser.username){
-      if(users.some(u=>u.username===nu)) return alert('Логин занят');
-      currentUser.username = nu;
-    }
-    if(np) currentUser.password = np;
-    function finish(){
-      saveLS(); updAvatar();
-      cabinetUsername.textContent = currentUser.username;
-      cabinetSettingsForm.style.display = 'none';
-      newUsername.value = '';
-      newPassword.value = '';
-      avatarFile.value = '';
-      alert('Сохранено');
-    }
+/* настройки профиля */
+openSettingsBtn.onclick = ()=>{
+  cabinetSettingsForm.style.display =
+    cabinetSettingsForm.style.display==='block'?'none':'block';
+};
+document.getElementById('saveSettingsBtn').onclick = async ()=>{
+  if(!currentUser) return;
+  const nu = newUsername.value.trim(), np = newPassword.value.trim();
+  const fd = new FormData();
+  if(nu && nu!==currentUser.username) fd.append('username', nu);
+  if(np) fd.append('password',  np);
+  if(avatarFile.files[0])       fd.append('avatar',    avatarFile.files[0]);
+  try{
+    if([...fd.keys()].length) await api('/profile',{method:'PUT',body:fd});
+    if(nu) currentUser.username=nu;
     if(avatarFile.files[0]){
-      const r = new FileReader();
-      r.onload = e => {
-        currentUser.avatar = e.target.result;
-        finish();
-      };
-      r.readAsDataURL(avatarFile.files[0]);
-    } else finish();
-  };
+      const fr = new FileReader();
+      fr.onload = e=>{ currentUser.avatar=e.target.result; finish(); };
+      fr.readAsDataURL(avatarFile.files[0]);
+      return;
+    }
+    finish();
+  }catch(e){
+    if(e.message.includes('UNIQUE')) alert('Логин занят');
+    else alert('Ошибка сохранения');
+  }
+  function finish(){
+    updAvatar(); cabinetUsername.textContent=currentUser.username;
+    cabinetSettingsForm.style.display='none';
+    [newUsername,newPassword,avatarFile].forEach(i=>i.value='');
+    alert('Сохранено');
+  }
+};
 
-  /* ---------- Тема ---------- */
-  function applyTheme(){
-    document.body.classList.toggle('dark', theme==='dark');
-    document.getElementById('themeToggle').textContent = theme==='dark' ? '🌚' : '🌞';
+/* ---------- Тема ---------- */
+function applyTheme(){
+  document.body.classList.toggle('dark',theme==='dark');
+  document.getElementById('themeToggle').textContent = theme==='dark' ? '🌚' : '🌞';
+}
+applyTheme();
+document.getElementById('themeToggle').onclick = async ()=>{
+  theme = theme==='dark'?'light':'dark';
+  localStorage.setItem('theme', theme);
+  if(currentUser){
+    const fd = new FormData(); fd.append('theme', theme);
+    await api('/profile',{method:'PUT',body:fd}).catch(console.warn);
   }
   applyTheme();
-  document.getElementById('themeToggle').onclick = () => {
-    theme = theme==='dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', theme);
-    applyTheme();
-  };
+};
 
-  /* ---------- Данные карточек ---------- */
-  const cards = [
-    {id:'swot',title:'SWOT-анализ',cat:'analitica',steps:['Сильные стороны','Слабые стороны','Возможности','Угрозы']},
-    {id:'pest',title:'PEST-анализ',cat:'analitica',steps:['Политические','Экономические','Социальные','Технологические']},
-    {id:'porter',title:'5 сил Портера',cat:'analitica',steps:['Сила поставщиков','Сила покупателей','Новые игроки','Заменители','Конкуренция']},
-    {id:'lean',title:'Lean Canvas',cat:'plan',steps:['Проблемы','Сегменты','УТП','Решение','Каналы','Доходы','Затраты']},
-    {id:'bmc',title:'Business Model Canvas',cat:'plan',steps:['ЦП','Клиенты','Каналы','Отношения','Доходы','Ресурсы','Деятельность','Партнёры','Затраты']},
-    {id:'vpc',title:'Value Proposition Canvas',cat:'plan',steps:['Профиль','Задачи','Боли','Выгоды','Продукт','Устранители болей','Создатели выгод']},
-    {id:'smart',title:'SMART-цели',cat:'monitor',steps:['Specific','Measurable','Achievable','Relevant','Time-bound']},
-    {id:'okr',title:'OKR-план',cat:'monitor',steps:['Objective','Key Result 1','Key Result 2','Key Result 3']},
-    {id:'raci',title:'RACI-матрица',cat:'monitor',steps:['Задача','R','A','C','I']},
-    {id:'kpi',title:'KPI-дашборд',cat:'monitor',steps:['Метрика','Текущий','Цель','Источник']},
-    {id:'risk',title:'Матрица рисков',cat:'analitica',steps:['Риск','Вероятность','Влияние','Стратегия']},
-    {id:'stake',title:'Карта стейкхолдеров',cat:'analitica',steps:['Стейкхолдер','Интерес','Влияние','Стратегия']},
-    {id:'moscow',title:'MoSCoW-приоритизация',cat:'plan',steps:['Must','Should','Could','Won’t']},
-    {id:'usm',title:'User Story Map',cat:'plan',steps:['Эпики','Действия','User Stories','Релизы']},
-    {id:'gantt',title:'Гантт-диаграмма',cat:'plan',steps:['Задача','Начало','Конец','Ответственный','%']},
-    {id:'bsc',title:'Balanced Scorecard',cat:'monitor',steps:['Финансы','Клиенты','Процессы','Обучение']}
-  ];
+/* ---------- DOM-элементы страниц ---------- */
+const pages = {
+  home   : document.getElementById('pageHome'),
+  events : document.getElementById('pageEvents'),
+  reports: document.getElementById('pageReports'),
+  cases  : document.getElementById('pageCases')
+};
+const navItems  = document.querySelectorAll('nav li');
+const cardsGrid = document.getElementById('cardsGrid'),
+      favWrap   = document.getElementById('favWrap'),
+      timeline  = document.getElementById('timeline'),
+      toast     = document.getElementById('toast'),
+      searchInput = document.getElementById('searchInput'),
+      favToggle = document.getElementById('favToggle');
 
-  /* ---------- DOM-элементы ---------- */
-  const pages = {
-    home: document.getElementById('pageHome'),
-    events: document.getElementById('pageEvents'),
-    reports: document.getElementById('pageReports'),
-    cases: document.getElementById('pageCases')
-  };
-  const navItems = document.querySelectorAll('nav li');
-  const cardsGrid = document.getElementById('cardsGrid'),
-        favWrap = document.getElementById('favWrap'),
-        timeline = document.getElementById('timeline'),
-        toast = document.getElementById('toast'),
-        searchInput = document.getElementById('searchInput'),
-        favToggle = document.getElementById('favToggle');
+/* ---------- Навигация ---------- */
+function showPage(key){
+  Object.values(pages).forEach(p=>p.style.display='none');
+  pages[key].style.display='block';
+  navItems.forEach(li=>li.classList.toggle('active',li.dataset.page===key));
+  if(key==='home')   renderFav();
+  if(key==='events') renderTimeline();
+  if(key==='reports') updateStats();
+}
+navItems.forEach(li=>li.onclick=()=>showPage(li.dataset.page));
 
-  /* ---------- Вспомогательные ---------- */
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(()=>toast.classList.remove('show'),3000);
-  }
-  function roman(i){
-    const r=['I','II','III','IV','V','VI','VII','VIII','IX','X'];
-    return r[i]||i+1;
-  }
+/* ---------- Карточки, избранное и поиск ---------- */
+function buildCards(){
+  cardsGrid.innerHTML='';
+  const filter = document.querySelector('.tab-btn.active').dataset.cat;
+  const ordered = [...cards]
+    .filter(c=>filter==='all'||c.cat===filter)
+    .sort((a,b)=>(favCards.includes(a.id)?-1:1)+(favCards.includes(b.id)?1:-1));
+  ordered.forEach(card=>{
+    const div=document.createElement('div');
+    div.className='card'; div.dataset.id=card.id; div.textContent=card.title;
+    if(favCards.includes(card.id)) div.classList.add('fav');
+    cardsGrid.appendChild(div);
 
-  /* ---------- Навигация ---------- */
-  function showPage(key){
-    Object.values(pages).forEach(p=>p.style.display='none');
-    pages[key].style.display='block';
-    navItems.forEach(li=>li.classList.toggle('active', li.dataset.page===key));
-    if(key==='home') renderFav();
-    if(key==='events') renderTimeline();
-    if(key==='reports') updateStats();
-  }
-  navItems.forEach(li=>li.onclick=()=>showPage(li.dataset.page));
-
-  /* ---------- Карточки и избранное ---------- */
-  function buildCards(){
-    cardsGrid.innerHTML = '';
-    const filter = document.querySelector('.tab-btn.active').dataset.cat;
-    const ordered = [...cards]
-      .filter(c=>filter==='all'||c.cat===filter)
-      .sort((a,b)=>(favCards.includes(a.id)?-1:1)+(favCards.includes(b.id)?1:-1));
-    ordered.forEach(card=>{
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.dataset.id = card.id;
-      div.textContent = card.title;
-      if(favCards.includes(card.id)) div.classList.add('fav');
-      cardsGrid.appendChild(div);
-      if(!document.getElementById('m_'+card.id)){
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.id = 'm_'+card.id;
-        modal.innerHTML = `
-          <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="modal-header">
-              <span>${card.title}</span>
-              <button class="save-all" data-save="${card.id}">💾 Скачать всё</button>
-            </div>
-            <div class="modal-body">
-              ${card.steps.map((s,i)=>`
-                <div class="step-row">
-                  <div class="step-circle">${roman(i)}</div>
-                  <textarea class="step-input" placeholder="${s}..." data-input="${card.id}_${i}"></textarea>
-                  <div class="example-column">
-                    <label>Пример</label>
-                    <textarea class="example-textarea" placeholder="Пример: ${s.toLowerCase()}..." data-example="${card.id}_${i}"></textarea>
-                    <div class="download-circle" data-dl="${card.id}_${i}">⬇</div>
-                  </div>
+    /* создаём модалку один раз */
+    if(!document.getElementById('m_'+card.id)){
+      const modal=document.createElement('div');
+      modal.className='modal-overlay'; modal.id='m_'+card.id;
+      modal.innerHTML=`
+        <div class="modal-content">
+          <span class="close-modal">&times;</span>
+          <div class="modal-header">
+            <span>${card.title}</span>
+            <button class="save-all" data-save="${card.id}">💾 Скачать всё</button>
+          </div>
+          <div class="modal-body">
+            ${card.steps.map((s,i)=>`
+              <div class="step-row">
+                <div class="step-circle">${roman(i)}</div>
+                <textarea class="step-input"
+                          placeholder="${s.text}..."
+                          data-input="${card.id}_${i}"
+                          data-stepid="${s.id}"></textarea>
+                <div class="example-column">
+                  <label>Пример</label>
+                  <textarea class="example-textarea"
+                            placeholder="Пример: ${s.text.toLowerCase()}..."
+                            data-example="${card.id}_${i}"
+                            data-stepid="${s.id}"></textarea>
+                  <div class="download-circle" data-dl="${card.id}_${i}">⬇</div>
                 </div>
-              `).join('')}
-            </div>
-          </div>`;
-        document.getElementById('modalsContainer').appendChild(modal);
-      }
-    });
-    applySearch();
-  }
-  function renderFav(){
-    favWrap.innerHTML = '';
-    if(!favCards.length){
-      favWrap.innerHTML = '<p style="grid-column:1/-1">Нет избранных карточек ⭐</p>';
-      return;
+              </div>`).join('')}
+          </div>
+        </div>`;
+      document.getElementById('modalsContainer').appendChild(modal);
     }
-    favCards.forEach(id=>{
-      const card = cards.find(c=>c.id===id);
-      if(!card) return;
-      const div = document.createElement('div');
-      div.className = 'card fav';
-      div.dataset.id = id;
-      div.textContent = card.title;
-      favWrap.appendChild(div);
-    });
-  }
-  document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{
-    document.querySelector('.tab-btn.active').classList.remove('active');
-    b.classList.add('active');
-    buildCards();
   });
-  cardsGrid.onclick = cardClick;
-  favWrap.onclick = cardClick;
-  favToggle.onclick = ()=>{
-    favToggle.classList.toggle('active');
-    if(favToggle.classList.contains('active'))
-      showToast('Кликните карточку, чтобы добавить/убрать из избранного');
-  };
-  function cardClick(e){
-    const c = e.target.closest('.card');
-    if(!c) return;
-    if(favToggle.classList.contains('active')){
-      const id = c.dataset.id;
-      if(favCards.includes(id)) favCards = favCards.filter(x=>x!==id);
-      else favCards.push(id);
-      saveLS(); buildCards(); renderFav();
-      return;
-    }
-    openModal(c.dataset.id);
+  applySearch();
+}
+function renderFav(){
+  favWrap.innerHTML='';
+  if(!favCards.length){
+    favWrap.innerHTML='<p style="grid-column:1/-1">Нет избранных карточек ⭐</p>';
+    return;
   }
-  function applySearch(){
-    const q = searchInput.value.toLowerCase();
-    document.querySelectorAll('#cardsGrid .card').forEach(c=>{
-      c.style.display = c.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
-    });
-  }
-  searchInput.oninput = applySearch;
-
-  /* ---------- Модалки ---------- */
-  function openModal(id){
-    const m = document.getElementById('m_'+id);
-    m.style.display = 'flex';
-    m.querySelectorAll('textarea').forEach(t=>{
-      const key = (currentUser?.username||'guest')+'_'+
-        (t.dataset.input?`in_${t.dataset.input}`:`ex_${t.dataset.example}`);
-      t.value = localStorage.getItem(key) || '';
-    });
-  }
-  document.getElementById('modalsContainer').onclick = e=>{
-    if(e.target.classList.contains('modal-overlay'))
-      e.target.style.display = 'none';
-    if(e.target.classList.contains('close-modal'))
-      e.target.closest('.modal-overlay').style.display = 'none';
-    if(e.target.dataset.dl){
-      const [cid, idx] = e.target.dataset.dl.split('_');
-      const step = cards.find(c=>c.id===cid).steps[idx];
-      const txt = document.querySelector(`[data-example="${cid}_${idx}"]`).value;
-      download(`${cid}_${idx}.txt`, `${step}:\n${txt}`);
-    }
-    if(e.target.dataset.save){
-      saveAll(e.target.dataset.save);
-    }
-  };
-  document.getElementById('modalsContainer').addEventListener('input', e=>{
-    if(!e.target.matches('textarea')) return;
-    const t = e.target;
-    const key = (currentUser?.username||'guest')+'_'+
-      (t.dataset.input?`in_${t.dataset.input}`:`ex_${t.dataset.example}`);
-    localStorage.setItem(key, t.value);
+  favCards.forEach(id=>{
+    const card=cards.find(c=>c.id===id); if(!card) return;
+    const div=document.createElement('div');
+    div.className='card fav'; div.dataset.id=id; div.textContent=card.title;
+    favWrap.appendChild(div);
   });
-  function saveAll(cid){
-    const card = cards.find(c=>c.id===cid);
-    let txt = `${card.title}\n========================\n`;
-    card.steps.forEach((s,i)=>{
-      const inV = document.querySelector(`[data-input="${cid}_${i}"]`).value;
-      const exV = document.querySelector(`[data-example="${cid}_${i}"]`).value;
-      txt += `• ${s}\nПоле: ${inV}\nПример: ${exV}\n\n`;
-    });
-    download(`${cid}.txt`, txt);
-  }
-
-  /* ---------- События ---------- */
-  function renderTimeline(){
-    timeline.innerHTML = events.map(ev=>
-      `<div><strong>${ev.date}</strong><br>${ev.text}</div>`
-    ).join('');
-  }
-  document.getElementById('addEventBtn').onclick = ()=>{
-    const val = document.getElementById('eventInput').value.trim();
-    if(!val) return;
-    events.unshift({date: new Date().toLocaleString(), text: val});
-    document.getElementById('eventInput').value = '';
-    saveLS(); renderTimeline();
-  };
-
-  /* ---------- Отчёты ---------- */
-  function countFilled(card){
-    let filled = 0;
-    card.steps.forEach((_,i)=>{
-      if(localStorage.getItem(`${currentUser?.username||'guest'}_in_${card.id}_${i}`)) filled++;
-    });
-    return filled;
-  }
-  function updateStats(){
-    const ul = document.getElementById('statList');
-    ul.innerHTML = '';
-    cards.forEach(c=>{
-      const f = countFilled(c);
-      ul.innerHTML += `<li>${c.title}: заполнено ${f}/${c.steps.length}</li>`;
-    });
-  }
-  document.getElementById('refreshStat').onclick = updateStats;
-
-  /* ---------- ZIP-экспорт ---------- */
-  function download(name, content){
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([content], {type:'text/plain'}));
-    a.download = name; a.click();
-    URL.revokeObjectURL(a.href);
-  }
-  async function exportZIP(){
-    const zip = new JSZip(), uname = currentUser?.username||'guest';
-    cards.forEach(card=>{
-      let txt = `${card.title}\n========================\n`;
-      card.steps.forEach((s,i)=>{
-        const inV = localStorage.getItem(`${uname}_in_${card.id}_${i}`)||'';
-        const exV = localStorage.getItem(`${uname}_ex_${card.id}_${i}`)||'';
-        txt += `• ${s}\nПоле: ${inV}\nПример: ${exV}\n\n`;
+}
+document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{
+  document.querySelector('.tab-btn.active').classList.remove('active');
+  b.classList.add('active'); buildCards();
+});
+async function toggleFavorite(id) {
+  if (currentUser) {
+    if (favCards.includes(id)) {
+      // удаляем
+      await api(`/favorites/${id}`, { method: 'DELETE' });
+      favCards = favCards.filter(x => x !== id);
+    } else {
+      // добавляем
+      const fd = new FormData();          // ← формируем form-data
+      fd.append('card_id', id);
+      await api('/favorites', {            // ← отправляем её
+        method: 'POST',
+        body: fd
       });
-      zip.file(`${card.title}.txt`, txt);
-    });
-    const blob = await zip.generateAsync({type:'blob'});
-    download('uppttip_export.zip', blob);
+      favCards.push(id);
+    }
+  } else {                                // гость
+    if (favCards.includes(id))
+      favCards = favCards.filter(x => x !== id);
+    else
+      favCards.push(id);
+    localStorage.setItem('favCards', JSON.stringify(favCards));
   }
-  document.getElementById('exportBtn').onclick = exportZIP;
-  document.getElementById('exportBtn2').onclick = exportZIP;
+}
 
-  /* ---------- Инициализация после входа ---------- */
-  function initAfterLogin(){
-    buildCards();
-    renderFav();
-    renderTimeline();
-    updateStats();
+async function cardClick(e){
+  const c=e.target.closest('.card'); if(!c) return;
+  if(favToggle.classList.contains('active')){
+    await toggleFavorite(c.dataset.id); buildCards(); renderFav(); return;
   }
-  // Показываем страницу и если вошли — инициализируем
-  showPage('home');
-  if(currentUser) initAfterLogin();
-  </script>
+  openModal(c.dataset.id);
+}
+cardsGrid.onclick=cardClick;
+favWrap.onclick =cardClick;
+favToggle.onclick=()=>{
+  favToggle.classList.toggle('active');
+  if(favToggle.classList.contains('active'))
+    showToast('Кликните карточку, чтобы добавить/убрать из избранного');
+};
+function applySearch(){
+  const q=searchInput.value.toLowerCase();
+  document.querySelectorAll('#cardsGrid .card').forEach(c=>{
+    c.style.display=c.textContent.toLowerCase().includes(q)?'flex':'none';
+  });
+}
+searchInput.oninput=applySearch;
+
+/* ---------- Модалки и шаги ---------- */
+function openModal(id){
+  const m=document.getElementById('m_'+id); m.style.display='flex';
+  m.querySelectorAll('textarea').forEach(t=>{
+    const stepId=parseInt(t.dataset.stepid);
+    let val='';
+    if(currentUser){
+      const d=userSteps.get(stepId);
+      val = t.dataset.input ? d?.input||'' : d?.example||'';
+    }else{
+      const key = 'guest_' + (t.dataset.input
+                  ? `in_${t.dataset.input}`
+                  : `ex_${t.dataset.example}`);
+      val = localStorage.getItem(key)||'';
+    }
+    t.value=val;
+  });
+}
+document.getElementById('modalsContainer').onclick = e=>{
+  if(e.target.classList.contains('modal-overlay'))
+    e.target.style.display='none';
+  if(e.target.classList.contains('close-modal'))
+    e.target.closest('.modal-overlay').style.display='none';
+  if(e.target.dataset.dl){
+    const [cid,idx]=e.target.dataset.dl.split('_');
+    const stepTxt=cards.find(c=>c.id===cid).steps[idx].text;
+    const txt=document.querySelector(`[data-example="${cid}_${idx}"]`).value;
+    download(`${cid}_${idx}.txt`,`${stepTxt}:\n${txt}`);
+  }
+  if(e.target.dataset.save) saveAll(e.target.dataset.save);
+};
+document.getElementById('modalsContainer').addEventListener('input', async e=>{
+  if(!e.target.matches('textarea')) return;
+  const t=e.target, stepId=parseInt(t.dataset.stepid);
+  const isInput=!!t.dataset.input;
+  if(currentUser){
+    const d=userSteps.get(stepId)||{input:'',example:''};
+    isInput ? (d.input=t.value) : (d.example=t.value);
+    userSteps.set(stepId,d);
+    await api('/user_steps',{
+      method:'POST',
+      body:JSON.stringify({step_id:stepId,input:d.input,example:d.example})
+    }).catch(console.warn);
+  }else{
+    const key='guest_'+(isInput?`in_${t.dataset.input}`:`ex_${t.dataset.example}`);
+    localStorage.setItem(key,t.value);
+  }
+});
+function saveAll(cid){
+  const card=cards.find(c=>c.id===cid);
+  let txt=`${card.title}\n========================\n`;
+  card.steps.forEach((s,i)=>{
+    let inV='',exV='';
+    if(currentUser){
+      const d=userSteps.get(s.id)||{};
+      inV=d.input||''; exV=d.example||'';
+    }else{
+      inV=localStorage.getItem(`guest_in_${cid}_${i}`)||'';
+      exV=localStorage.getItem(`guest_ex_${cid}_${i}`)||'';
+    }
+    txt+=`• ${s.text}\nПоле: ${inV}\nПример: ${exV}\n\n`;
+  });
+  download(`${cid}.txt`,txt);
+}
+
+/* ---------- События ---------- */
+function renderTimeline(){
+  timeline.innerHTML=events.map(ev=>`<div><strong>${ev.date}</strong><br>${ev.text}</div>`).join('');
+}
+document.getElementById('addEventBtn').onclick = async ()=>{
+  const val=document.getElementById('eventInput').value.trim();
+  if(!val) return;
+  if(currentUser){
+    const fd=new FormData(); fd.append('text',val);
+    await api('/events',{method:'POST',body:fd});
+  }else{
+    events.unshift({date:new Date().toLocaleString(),text:val});
+    localStorage.setItem('events',JSON.stringify(events));
+  }
+  events.unshift({date:new Date().toLocaleString(),text:val});
+  document.getElementById('eventInput').value='';
+  renderTimeline();
+};
+
+/* ---------- Отчёты / статистика ---------- */
+function countFilled(card){
+  let filled=0;
+  card.steps.forEach(s=>{
+    const d=userSteps.get(s.id); if(d?.input) filled++;
+  });
+  return filled;
+}
+function updateStats(){
+  const ul=document.getElementById('statList'); ul.innerHTML='';
+  if(currentUser){
+    api('/stats').then(rows=>{
+      rows.forEach(r=>{
+        const c=cards.find(c=>c.id===r.card_id); if(!c) return;
+        ul.innerHTML+=`<li>${c.title}: заполнено ${r.filled}/${r.total}</li>`;
+      });
+    });
+  }else{
+    cards.forEach(c=>{
+      const f=countFilled(c);
+      ul.innerHTML+=`<li>${c.title}: заполнено ${f}/${c.steps.length}</li>`;
+    });
+  }
+}
+document.getElementById('refreshStat').onclick = updateStats;
+
+/* ---------- ZIP-экспорт ---------- */
+function download(name,content){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content]));
+  a.download=name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+async function exportZIP(){
+  const zip=new JSZip(), uname=currentUser?.username||'guest';
+  cards.forEach(card=>{
+    let txt=`${card.title}\n========================\n`;
+    card.steps.forEach((s,i)=>{
+      let inV='',exV='';
+      if(currentUser){
+        const d=userSteps.get(s.id)||{};
+        inV=d.input||''; exV=d.example||'';
+      }else{
+        inV=localStorage.getItem(`${uname}_in_${card.id}_${i}`)||'';
+        exV=localStorage.getItem(`${uname}_ex_${card.id}_${i}`)||'';
+      }
+      txt+=`• ${s.text}\nПоле: ${inV}\nПример: ${exV}\n\n`;
+    });
+    zip.file(`${card.title}.txt`,txt);
+  });
+  const blob=await zip.generateAsync({type:'blob'});
+  download('uppttip_export.zip',blob);
+}
+document.getElementById('exportBtn').onclick = exportZIP;
+document.getElementById('exportBtn2').onclick= exportZIP;
+
+/* ---------- Инициализация после входа ---------- */
+function initAfterLogin() {
+  document.getElementById('modalsContainer').innerHTML = ''; // убираем старые модалки
+  buildCards();                                              // создаются заново с реальными id
+  renderFav();
+  renderTimeline();
+  updateStats();
+}
+
+/* ---------- Авто-аутентификация при открытии страницы ---------- */
+(async ()=>{
+  if(!token) return;
+  try{
+    const prof=await api('/profile');
+    currentUser=prof; theme=prof.theme||theme; applyTheme();
+    await loadInitialData(); updateView(); initAfterLogin();
+  }catch(e){ console.warn('auto auth fail',e); }
+})();
+
+/* ---------- Первый запуск ---------- */
+buildCards();          /* гость увидит базовые данные */
+showPage('home');
+</script>
+
 </body>
 </html>
